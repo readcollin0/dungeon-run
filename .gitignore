@@ -1,5 +1,6 @@
 /.settings
 /bin
+/wbp-meta
 .classpath
 .project
 !/src
