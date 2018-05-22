@@ -1,5 +1,9 @@
 /.settings
 /bin
+/wbp-meta
 .classpath
 .project
 !/src
+/nbproject
+build.xml
+manifest.mf
