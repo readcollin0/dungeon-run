@@ -26,4 +26,8 @@ public class DungeonRunController {
 		return players.get(0);
 	}
 	
+	public Monster getCurrentMonster() {
+		return currentMonster;
+	}
+	
 }
