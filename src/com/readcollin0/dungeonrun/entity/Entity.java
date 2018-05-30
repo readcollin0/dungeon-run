@@ -13,19 +13,20 @@ public class Entity implements DamageSource {
 	
 	EntityStats stats;
 	
+	{
+		DungeonRun.EVENT_BUS.fire(new EntityCreateEvent(this));
+	}
+	
 	public Entity() {
 		stats = new EntityStats();
-		entityCreated();
 	}
 	
 	public Entity(EntityStats stats) {
 		stats = new EntityStats(stats.getStats());
-		entityCreated();
 	}
 	
 	public Entity(HashMap<Attribute, Integer> customStats) {
 		stats = new EntityStats(customStats);
-		entityCreated();
 	}
 	
 	public EntityStats getStats() {
@@ -47,12 +48,13 @@ public class Entity implements DamageSource {
 		}
 	}
 	
-	private void entityCreated() {
-		DungeonRun.EVENT_BUS.fire(new EntityCreateEvent(this));
-	}
-	
 	void die() {
 		DungeonRun.EVENT_BUS.fire(new EntityDeathEvent(this));
+	}
+
+	@Override
+	public int getDamage() {
+		return 0;
 	}
 	
 }
