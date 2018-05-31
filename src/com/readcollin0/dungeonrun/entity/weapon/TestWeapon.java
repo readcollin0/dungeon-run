@@ -13,4 +13,13 @@ public class TestWeapon extends Weapon {
 		return Dice.d6() + Dice.d6();
 	}
 	
+	@Override
+	public int getAttackDamage(boolean isMelee) {
+		if (isMelee) {
+			return getDamage();
+		} else {
+			return 0;
+		}
+	}
+	
 }

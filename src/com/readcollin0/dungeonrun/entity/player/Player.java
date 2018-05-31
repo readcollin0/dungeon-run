@@ -57,7 +57,7 @@ public class Player extends Entity {
 		boolean isMelee = weapon.getWeaponType().equals(WeaponType.MELEE);
 		boolean hit = stats.skillCheck(isMelee ? Attribute.STRENGTH : Attribute.DEXTERITY) <= enemy.getStat(Attribute.ARMOR_CLASS);
 		if (hit) {
-			int damage = weapon.getDamage();
+			int damage = weapon.getAttackDamage(true);
 			enemy.damage(damage, this);
 //			DungeonRun.GUI.lblMessage.setText("You hit the " + DungeonRun.CONTROLLER.getCurrentEnemy().getName() + " for " + damage + " damage!");
 		}
