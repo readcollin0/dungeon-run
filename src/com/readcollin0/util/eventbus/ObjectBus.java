@@ -8,8 +8,9 @@ public class ObjectBus<T> {
 	
 	private ArrayList<Object> BUS_LIST = new ArrayList<Object>();
 	
+	@SuppressWarnings("unchecked")
 	public void fire(T e) {
-		for (Object o : BUS_LIST) {
+		for (Object o : (ArrayList<Object>) BUS_LIST.clone()) {
 			Method[] list = o.getClass().getMethods();
 			for (Method m : list) {
 				if (m.isAnnotationPresent(SubscribeEvent.class)) {
