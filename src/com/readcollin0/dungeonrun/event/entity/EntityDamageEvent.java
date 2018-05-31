@@ -5,8 +5,8 @@ import com.readcollin0.dungeonrun.entity.Entity;
 
 public class EntityDamageEvent extends EntityEvent {
 
-	int damage;
-	DamageSource source;
+	protected int damage;
+	protected DamageSource source;
 	
 	public EntityDamageEvent(Entity entity) {
 		super(entity);
@@ -20,6 +20,12 @@ public class EntityDamageEvent extends EntityEvent {
 		this.damage = damage;
 	}
 	
+	public DamageSource getDamageSource() {
+		return source;
+	}
 	
+	public int getDamage() {
+		return damage;
+	}
 	
 }

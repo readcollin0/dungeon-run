@@ -11,21 +11,25 @@ import com.readcollin0.dungeonrun.event.entity.EntityDeathEvent;
 
 public class Entity implements DamageSource {
 	
-	EntityStats stats;
+	protected EntityStats stats;
+	protected String name;
 	
 	{
 		DungeonRun.EVENT_BUS.fire(new EntityCreateEvent(this));
 	}
 	
-	public Entity() {
+	public Entity(String name) {
+		this.name = name;
 		stats = new EntityStats();
 	}
 	
-	public Entity(EntityStats stats) {
+	public Entity(String name, EntityStats stats) {
+		this(name);
 		stats = new EntityStats(stats.getStats());
 	}
 	
-	public Entity(HashMap<Attribute, Integer> customStats) {
+	public Entity(String name, HashMap<Attribute, Integer> customStats) {
+		this(name);
 		stats = new EntityStats(customStats);
 	}
 	
@@ -48,13 +52,19 @@ public class Entity implements DamageSource {
 		}
 	}
 	
-	void die() {
+	protected void die() {
 		DungeonRun.EVENT_BUS.fire(new EntityDeathEvent(this));
+		stats.setStat(Attribute.HEALTH, 0);
 	}
 
 	@Override
 	public int getDamage() {
 		return 0;
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 	
 }

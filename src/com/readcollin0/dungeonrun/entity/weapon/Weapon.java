@@ -4,10 +4,16 @@ import com.readcollin0.dungeonrun.entity.DamageSource;
 
 public class Weapon implements DamageSource {
 
-	String name;
+	protected String name;
+	protected WeaponType type;
 	
 	public Weapon(String name, WeaponType type) {
 		this.name = name;
+		this.type = type;
+	}
+	
+	public WeaponType getWeaponType() {
+		return type;
 	}
 	
 	public String getName() {
