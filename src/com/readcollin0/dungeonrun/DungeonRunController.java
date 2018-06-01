@@ -1,5 +1,6 @@
 package com.readcollin0.dungeonrun;
 
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
@@ -15,12 +16,19 @@ import com.readcollin0.dungeonrun.event.GameStartEvent;
 import com.readcollin0.dungeonrun.event.TurnTakeEvent;
 import com.readcollin0.dungeonrun.event.entity.combat.EntityAttackEvent;
 import com.readcollin0.dungeonrun.event.entity.combat.EntityDeathEvent;
+import com.readcollin0.dungeonrun.util.CanvasButton;
 import com.readcollin0.util.eventbus.SubscribeEvent;
 
 public class DungeonRunController {
 
 	private Timer timer = new Timer();
-
+	@SuppressWarnings("unused")
+	private CanvasButton testButton = new CanvasButton(100, 100, 250, 100, "Test Button", true, new Font("Helvetica", Font.PLAIN, 36)) {
+		public void onClick() {
+			System.out.println("Button Clicked!");
+		};
+	};
+	
 	// TODO: Add more players
 	private ArrayList<Player> players = new ArrayList<Player>();
 	private Enemy currentEnemy;

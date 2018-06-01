@@ -5,13 +5,10 @@ import java.util.HashMap;
 
 import com.readcollin0.dungeonrun.DungeonRun;
 import com.readcollin0.dungeonrun.entity.Entity;
-import com.readcollin0.dungeonrun.entity.player.Player;
 import com.readcollin0.dungeonrun.entity.stats.Attribute;
 import com.readcollin0.dungeonrun.entity.stats.EntityStats;
 import com.readcollin0.dungeonrun.entity.weapon.Weapon;
-import com.readcollin0.dungeonrun.entity.weapon.WeaponType;
 import com.readcollin0.dungeonrun.event.view.CanvasUpdateTopEvent;
-import com.readcollin0.dungeonrun.util.Dice;
 import com.readcollin0.util.eventbus.SubscribeEvent;
 
 public class Enemy extends Entity {
