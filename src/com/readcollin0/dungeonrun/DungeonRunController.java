@@ -23,11 +23,14 @@ public class DungeonRunController {
 
 	private Timer timer = new Timer();
 	@SuppressWarnings("unused")
-	private CanvasButton testButton = new CanvasButton(100, 100, 250, 100, "Test Button", true, new Font("Helvetica", Font.PLAIN, 36)) {
-		public void onClick() {
+	private CanvasButton testButton = new CanvasButton(100, 100, 250, 100, "Test Button", true, new Font("Helvetica", Font.PLAIN, 36), new Runnable() {
+
+		@Override
+		public void run() {
 			System.out.println("Button Clicked!");
-		};
-	};
+		}
+		
+	});
 	
 	// TODO: Add more players
 	private ArrayList<Player> players = new ArrayList<Player>();

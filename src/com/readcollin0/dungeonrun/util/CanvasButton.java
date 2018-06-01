@@ -20,18 +20,20 @@ public class CanvasButton {
 	protected int x, y, width, height;
 	protected String buttonText;
 	protected Font font;
+	protected Runnable clickHandler;
 	
 	// Defaults
 	protected int borderSize = 3;
 	protected Color borderColor = Color.BLUE, insideColor = Color.BLACK, textColor = Color.WHITE;
 	
 	
-	public CanvasButton(int x, int y, int width, int height, String text, boolean shown, Font font) {
+	public CanvasButton(int x, int y, int width, int height, String text, boolean shown, Font font, Runnable handler) {
 		DungeonRun.EVENT_BUS.subscribeObject(this);
 		
 		this.shown = shown;
 		this.buttonText = text;
 		this.font = font;
+		this.clickHandler = handler;
 		
 		this.x = x;
 		this.y = y;
@@ -57,10 +59,9 @@ public class CanvasButton {
 	
 	@SubscribeEvent
 	public void canvasClick(CanvasClickEvent e) {
-		System.out.println("Event Received");
-		if (e.getX() < x && e.getY() < y && x + width < e.getX() && y + height < e.getY()) {
-			System.out.println("Registered Button Click");
-			onClick();
+		if (e instanceof CanvasButtonClickEvent) return;
+		if (e.getX() > x && e.getY() > y && x + width > e.getX() && y + height > e.getY()) {
+			clickHandler.run();
 			DungeonRun.EVENT_BUS.fire(new CanvasButtonClickEvent(e.getX(), e.getY(), this));
 		}
 	}
@@ -83,9 +84,6 @@ public class CanvasButton {
 		drawCenteredText(e.getCanvas(), textColor, font, buttonText, x + width/2, y + height/2);
 	}
 	
-	public void onClick() {
-		
-	}
 	
 	public static void drawCenteredText(Canvas c, Color color, Font font, String text, int x, int y) {
 		Graphics g = c.getGraphics();
