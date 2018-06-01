@@ -10,6 +10,7 @@ import com.readcollin0.dungeonrun.entity.stats.Attribute;
 import com.readcollin0.dungeonrun.entity.weapon.TestWeapon;
 import com.readcollin0.dungeonrun.entity.weapon.Weapon;
 import com.readcollin0.dungeonrun.entity.weapon.WeaponType;
+import com.readcollin0.dungeonrun.event.GameStartEvent;
 import com.readcollin0.dungeonrun.event.TurnTakeEvent;
 import com.readcollin0.dungeonrun.event.button.ButtonClickEvent;
 import com.readcollin0.dungeonrun.event.entity.player.PlayerDamageEvent;
@@ -20,8 +21,10 @@ public class Player extends Entity {
 	ArrayList<Weapon> weapons = new ArrayList<Weapon>();
 	int weaponEquipped = 0;
 	
-	public Player() {
+	public Player() {	
 		super("Player");
+		stats.setStat(Attribute.MAX_HEALTH, 20);
+		stats.setStat(Attribute.HEALTH, 20);
 		DungeonRun.EVENT_BUS.subscribeObject(this);
 		weapons.add(new TestWeapon());
 	}
@@ -29,11 +32,22 @@ public class Player extends Entity {
 	@Override
 	public void damage(int amount, DamageSource source) {
 		super.damage(amount, source);
+		updateHealthBar();
+	}
+	
+	public void updateHealthBar() {
 		int health = stats.getStat(Attribute.HEALTH);
 		int maxHealth = stats.getStat(Attribute.MAX_HEALTH);
-		int progress = (int) ((1.0 * health) / maxHealth);
+		int progress = (int) (100.0 * health / maxHealth);
+		
+//		System.out.println(String.format("Health: %d\t\tMax Health: %d\t\tProgress: %d\t\t", health, maxHealth, progress));
 		
 		DungeonRun.GUI.progressBar.setValue(progress);
+	}
+	
+	@SubscribeEvent
+	public void onGameStart(GameStartEvent e) {
+		updateHealthBar();
 	}
 	
 	@SubscribeEvent
@@ -44,11 +58,8 @@ public class Player extends Entity {
 	// TODO: Add unarmed
 	@SubscribeEvent
 	public void onAttackButtonClicked(ButtonClickEvent e) {
-		System.out.println("Event Handler Called!");
 		if (!e.getButtonClicked().getText().equals("Attack")) return; // Checks to make sure the button is the attack button
 		if (!DungeonRun.CONTROLLER.isPlayersTurn) return; // Checks to make sure it is players turn
-		
-		DungeonRun.EVENT_BUS.fire(new TurnTakeEvent());
 		
 		Weapon weapon = weapons.get(weaponEquipped);
 		Enemy enemy = DungeonRun.CONTROLLER.getCurrentEnemy();
@@ -61,6 +72,8 @@ public class Player extends Entity {
 			enemy.damage(damage, this);
 //			DungeonRun.GUI.lblMessage.setText("You hit the " + DungeonRun.CONTROLLER.getCurrentEnemy().getName() + " for " + damage + " damage!");
 		}
+
+		DungeonRun.EVENT_BUS.fire(new TurnTakeEvent());
 	}
 	
 }

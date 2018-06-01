@@ -1,7 +1,8 @@
-package com.readcollin0.dungeonrun.event.entity;
+package com.readcollin0.dungeonrun.event.entity.combat;
 
 import com.readcollin0.dungeonrun.entity.DamageSource;
 import com.readcollin0.dungeonrun.entity.Entity;
+import com.readcollin0.dungeonrun.event.entity.EntityEvent;
 
 public class EntityDamageEvent extends EntityEvent {
 
