@@ -5,11 +5,9 @@ import java.util.ArrayList;
 import com.readcollin0.dungeonrun.DungeonRun;
 import com.readcollin0.dungeonrun.entity.DamageSource;
 import com.readcollin0.dungeonrun.entity.Entity;
-import com.readcollin0.dungeonrun.entity.enemy.Enemy;
 import com.readcollin0.dungeonrun.entity.stats.Attribute;
 import com.readcollin0.dungeonrun.entity.weapon.TestWeapon;
 import com.readcollin0.dungeonrun.entity.weapon.Weapon;
-import com.readcollin0.dungeonrun.entity.weapon.WeaponType;
 import com.readcollin0.dungeonrun.event.GameStartEvent;
 import com.readcollin0.dungeonrun.event.TurnTakeEvent;
 import com.readcollin0.dungeonrun.event.button.ButtonClickEvent;
@@ -54,26 +52,32 @@ public class Player extends Entity {
 	public void onPlayerDamage(PlayerDamageEvent e) {
 		
 	}
-	
-	// TODO: Add unarmed
+
 	@SubscribeEvent
 	public void onAttackButtonClicked(ButtonClickEvent e) {
+		if (!DungeonRun.CONTROLLER.inCombat) return;
 		if (!e.getButtonClicked().getText().equals("Attack")) return; // Checks to make sure the button is the attack button
 		if (!DungeonRun.CONTROLLER.isPlayersTurn) return; // Checks to make sure it is players turn
 		
-		Weapon weapon = weapons.get(weaponEquipped);
-		Enemy enemy = DungeonRun.CONTROLLER.getCurrentEnemy();
+//		Weapon weapon = weapons.get(weaponEquipped);
+//		Enemy enemy = DungeonRun.CONTROLLER.getCurrentEnemy();
+//		
+//		// TODO: Implement Proficiencies and other things like them
+//		boolean isMelee = weapon.getWeaponType().equals(WeaponType.MELEE);
+//		boolean hit = stats.skillCheck(isMelee ? Attribute.STRENGTH : Attribute.DEXTERITY) <= enemy.getStat(Attribute.ARMOR_CLASS);
+//		if (hit) {
+//			int damage = weapon.getAttackDamage(true);
+//			enemy.damage(damage, this);
+////			DungeonRun.GUI.lblMessage.setText("You hit the " + DungeonRun.CONTROLLER.getCurrentEnemy().getName() + " for " + damage + " damage!");
+//		}
 		
-		// TODO: Implement Proficiencies and other things like them
-		boolean isMelee = weapon.getWeaponType().equals(WeaponType.MELEE);
-		boolean hit = stats.skillCheck(isMelee ? Attribute.STRENGTH : Attribute.DEXTERITY) <= enemy.getStat(Attribute.ARMOR_CLASS);
-		if (hit) {
-			int damage = weapon.getAttackDamage(true);
-			enemy.damage(damage, this);
-//			DungeonRun.GUI.lblMessage.setText("You hit the " + DungeonRun.CONTROLLER.getCurrentEnemy().getName() + " for " + damage + " damage!");
-		}
-
+		attack(DungeonRun.CONTROLLER.getCurrentEnemy(), getEquippedWeapon());
 		DungeonRun.EVENT_BUS.fire(new TurnTakeEvent());
+	}
+	
+	@Override
+	protected Weapon getEquippedWeapon() {
+		return weapons.get(weaponEquipped);
 	}
 	
 }
