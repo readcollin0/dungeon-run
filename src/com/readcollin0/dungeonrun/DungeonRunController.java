@@ -74,10 +74,11 @@ public class DungeonRunController {
 
 	@SubscribeEvent
 	public void onDamage(EntityAttackEvent e) {
+		if (e.didHit() && e.getDamage() >= e.getAttackee().getStat(Attribute.HEALTH)) return;
 		if (e.didHit()) {
-			DungeonRun.GUI.lblMessage.setText(String.format("%s was hit by %s for %d damage!", e.getAttackee(), e.getEntity(), e.getDamage()));
+			DungeonRun.GUI.lblMessage.setText(String.format("%s was hit by %s for %d damage!", e.getAttackee().getName(), e.getEntity().getName(), e.getDamage()));
 		} else {
-			DungeonRun.GUI.lblMessage.setText(String.format("%s tried to hit %s but missed!", e.getDamage(), e.getAttackee()));
+			DungeonRun.GUI.lblMessage.setText(String.format("%s tried to hit %s but missed!", e.getEntity().getName(), e.getAttackee().getName()));
 		}
 	}
 

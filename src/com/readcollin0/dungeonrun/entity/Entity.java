@@ -3,13 +3,13 @@ package com.readcollin0.dungeonrun.entity;
 import java.util.HashMap;
 
 import com.readcollin0.dungeonrun.DungeonRun;
-import com.readcollin0.dungeonrun.entity.player.Player;
 import com.readcollin0.dungeonrun.entity.stats.Attribute;
 import com.readcollin0.dungeonrun.entity.stats.EntityStats;
 import com.readcollin0.dungeonrun.entity.weapon.Unarmed;
 import com.readcollin0.dungeonrun.entity.weapon.Weapon;
 import com.readcollin0.dungeonrun.entity.weapon.WeaponType;
 import com.readcollin0.dungeonrun.event.entity.EntityCreateEvent;
+import com.readcollin0.dungeonrun.event.entity.combat.EntityAttackEvent;
 import com.readcollin0.dungeonrun.event.entity.combat.EntityDamageEvent;
 import com.readcollin0.dungeonrun.event.entity.combat.EntityDeathEvent;
 import com.readcollin0.dungeonrun.util.Dice;
@@ -44,20 +44,28 @@ public class Entity implements DamageSource {
 	}
 	
 	public void attack(Entity subject) {
-		Player player = DungeonRun.CONTROLLER.getMainPlayer();
+		attack(subject, getEquippedWeapon());
+	}
+
+	public void attack(Entity subject, Weapon weapon) {
+		boolean hit;
+		int damage = 0;
 		if (!(weapon instanceof Unarmed) && (weapon != null)) {
 			boolean isMelee = weapon.getWeaponType().equals(WeaponType.MELEE);
-			boolean hit = stats.skillCheck(isMelee ? Attribute.STRENGTH : Attribute.DEXTERITY) <= player.getStat(Attribute.ARMOR_CLASS);
+			hit = stats.skillCheck(isMelee ? Attribute.STRENGTH : Attribute.DEXTERITY) <= subject.getStat(Attribute.ARMOR_CLASS);
 			if (hit) {
-				player.damage(weapon.getDamage(), this);
+				damage = weapon.getAttackDamage(true); 
+				subject.damage(damage, this);
 			}
 		} else {
-			boolean hit = stats.skillCheck(Attribute.STRENGTH) <= player.getStat(Attribute.ARMOR_CLASS);
+			hit = stats.skillCheck(Attribute.STRENGTH) <= subject.getStat(Attribute.ARMOR_CLASS);
 			if (hit) {
-				int damage = Dice.d4() + stats.calculateModifier(Attribute.STRENGTH);
-				player.damage(damage, this);
+				damage = Dice.d4() + stats.calculateModifier(Attribute.STRENGTH);
+				subject.damage(damage, this);
 			}
 		}
+		
+		DungeonRun.EVENT_BUS.fire(new EntityAttackEvent(this, subject, hit, damage));
 	}
 
 	public int getStat(Attribute a) {
@@ -78,6 +86,10 @@ public class Entity implements DamageSource {
 	protected void die(DamageSource source) {
 		DungeonRun.EVENT_BUS.fire(new EntityDeathEvent(this, source));
 		stats.setStat(Attribute.HEALTH, 0);
+	}
+	
+	protected Weapon getEquippedWeapon() {
+		return weapon;
 	}
 
 	@Override

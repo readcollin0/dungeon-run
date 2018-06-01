@@ -10,7 +10,7 @@ public class TestWeapon extends Weapon {
 	
 	@Override
 	public int getDamage() {
-		return Dice.d6() + Dice.d6();
+		return Dice.d4() + Dice.d6();
 	}
 	
 	@Override
