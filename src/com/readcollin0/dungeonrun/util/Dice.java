@@ -3,7 +3,7 @@ package com.readcollin0.dungeonrun.util;
 public class Dice {
 	
 	public static int rollDie(int sides) {
-		return ((int) Math.random() * sides) + 1;
+		return ((int) (Math.random() * sides)) + 1;
 	}
 	
 	public static int d4() {

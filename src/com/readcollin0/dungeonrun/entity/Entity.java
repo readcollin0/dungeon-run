@@ -3,16 +3,22 @@ package com.readcollin0.dungeonrun.entity;
 import java.util.HashMap;
 
 import com.readcollin0.dungeonrun.DungeonRun;
+import com.readcollin0.dungeonrun.entity.player.Player;
 import com.readcollin0.dungeonrun.entity.stats.Attribute;
 import com.readcollin0.dungeonrun.entity.stats.EntityStats;
+import com.readcollin0.dungeonrun.entity.weapon.Unarmed;
+import com.readcollin0.dungeonrun.entity.weapon.Weapon;
+import com.readcollin0.dungeonrun.entity.weapon.WeaponType;
 import com.readcollin0.dungeonrun.event.entity.EntityCreateEvent;
-import com.readcollin0.dungeonrun.event.entity.EntityDamageEvent;
-import com.readcollin0.dungeonrun.event.entity.EntityDeathEvent;
+import com.readcollin0.dungeonrun.event.entity.combat.EntityDamageEvent;
+import com.readcollin0.dungeonrun.event.entity.combat.EntityDeathEvent;
+import com.readcollin0.dungeonrun.util.Dice;
 
 public class Entity implements DamageSource {
 	
 	protected EntityStats stats;
 	protected String name;
+	protected Weapon weapon = new Unarmed();
 	
 	{
 		DungeonRun.EVENT_BUS.fire(new EntityCreateEvent(this));
@@ -37,6 +43,23 @@ public class Entity implements DamageSource {
 		return stats;
 	}
 	
+	public void attack(Entity subject) {
+		Player player = DungeonRun.CONTROLLER.getMainPlayer();
+		if (!(weapon instanceof Unarmed) && (weapon != null)) {
+			boolean isMelee = weapon.getWeaponType().equals(WeaponType.MELEE);
+			boolean hit = stats.skillCheck(isMelee ? Attribute.STRENGTH : Attribute.DEXTERITY) <= player.getStat(Attribute.ARMOR_CLASS);
+			if (hit) {
+				player.damage(weapon.getDamage(), this);
+			}
+		} else {
+			boolean hit = stats.skillCheck(Attribute.STRENGTH) <= player.getStat(Attribute.ARMOR_CLASS);
+			if (hit) {
+				int damage = Dice.d4() + stats.calculateModifier(Attribute.STRENGTH);
+				player.damage(damage, this);
+			}
+		}
+	}
+
 	public int getStat(Attribute a) {
 		return stats.getStat(a);
 	}
@@ -48,12 +71,12 @@ public class Entity implements DamageSource {
 		stats.setStat(Attribute.HEALTH, health);
 		
 		if (health <= 0) {
-			die();
+			die(source);
 		}
 	}
 	
-	protected void die() {
-		DungeonRun.EVENT_BUS.fire(new EntityDeathEvent(this));
+	protected void die(DamageSource source) {
+		DungeonRun.EVENT_BUS.fire(new EntityDeathEvent(this, source));
 		stats.setStat(Attribute.HEALTH, 0);
 	}
 

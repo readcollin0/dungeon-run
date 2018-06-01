@@ -2,6 +2,7 @@ package com.readcollin0.dungeonrun;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -15,12 +16,21 @@ import javax.swing.border.MatteBorder;
 
 import com.readcollin0.dungeonrun.event.button.ButtonClickEvent;
 import com.readcollin0.dungeonrun.event.button.CanvasClickEvent;
+import com.readcollin0.dungeonrun.event.view.CanvasEvent;
+import com.readcollin0.dungeonrun.event.view.CanvasUpdateBottomEvent;
+import com.readcollin0.dungeonrun.event.view.CanvasUpdateFinishEvent;
+import com.readcollin0.dungeonrun.event.view.CanvasUpdateMiddleEvent;
+import com.readcollin0.dungeonrun.event.view.CanvasUpdateStartEvent;
+import com.readcollin0.dungeonrun.event.view.CanvasUpdateTopEvent;
+import com.readcollin0.util.eventbus.Event;
+import com.readcollin0.util.eventbus.SubscribeEvent;
 
 public class DungeonRunUI {
 
 	public HashMap<String, JButton> buttons = new HashMap<String, JButton>();
 	public JProgressBar progressBar;
 	public JLabel lblMessage;
+	public Canvas canvas;
 	
 	private JFrame frmDungeonRun;
 
@@ -46,10 +56,28 @@ public class DungeonRunUI {
 	 */
 	DungeonRunUI() {
 		initialize();
+		DungeonRun.EVENT_BUS.subscribeObject(this);
 	}
 	
 	void start() {
 		this.frmDungeonRun.setVisible(true);
+	}
+	
+	@SubscribeEvent
+	public void onEvent(Event e) {
+		if (e instanceof CanvasEvent) return;
+		
+		updateCanvas();
+	}
+	
+	public void updateCanvas() {
+		Graphics g = canvas.getGraphics();
+		g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		DungeonRun.EVENT_BUS.fire(new CanvasUpdateStartEvent(canvas));
+		DungeonRun.EVENT_BUS.fire(new CanvasUpdateBottomEvent(canvas));
+		DungeonRun.EVENT_BUS.fire(new CanvasUpdateMiddleEvent(canvas));
+		DungeonRun.EVENT_BUS.fire(new CanvasUpdateTopEvent(canvas));
+		DungeonRun.EVENT_BUS.fire(new CanvasUpdateFinishEvent(canvas));
 	}
 
 	/**
@@ -81,7 +109,7 @@ public class DungeonRunUI {
 		lblMessage.setBounds(12, 50, 271, 16);
 		panel.add(lblMessage);
 		
-		Canvas canvas = new Canvas();
+		canvas = new Canvas();
 		canvas.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -108,7 +136,6 @@ public class DungeonRunUI {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				DungeonRun.EVENT_BUS.fire(new ButtonClickEvent(buttons.get(name)));
-				System.out.println("ButtonClicked " + name);
 			}
 		});
 		buttons.get(name).setBounds(x, y, width, height);

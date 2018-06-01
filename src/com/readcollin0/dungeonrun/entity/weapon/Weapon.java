@@ -25,4 +25,8 @@ public class Weapon implements DamageSource {
 		return 0;
 	}
 	
+	public int getAttackDamage(boolean isMelee) {
+		return 0;
+	}
+	
 }
