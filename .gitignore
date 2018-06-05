@@ -7,4 +7,6 @@
 /nbproject
 build.xml
 manifest.mf
-/build
+/build/*
+/DungeonRun/nbproject/private/
+/src/nbproject/private/
